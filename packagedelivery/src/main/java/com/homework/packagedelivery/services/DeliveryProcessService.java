@@ -1,9 +1,10 @@
 package com.homework.packagedelivery.services;
 
+import com.homework.packagedelivery.PackageDeliveryApplicationProperties;
 import com.homework.packagedelivery.dto.DeliveryTargetDto;
 import com.homework.packagedelivery.enums.UserInputEnum;
-import com.homework.packagedelivery.enums.ConsoleOutputEnum;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,15 +27,18 @@ public class DeliveryProcessService {
     private static final String NEW_LINE = System.lineSeparator();
     private final Scanner scanner = new Scanner(System.in);
 
+    @Autowired
+    PackageDeliveryApplicationProperties properties;
+
     /**
      * Starting method of whole process, where basic information is displayed to user, like welcome and rules for
      * entering data.
      */
     public void loadPackagesProcess() {
-        System.out.println(ConsoleOutputEnum.WELCOME.getConsoleOutput());
-        System.out.println(ConsoleOutputEnum.ENTER_TEXT.getConsoleOutput() + NEW_LINE +
-                ConsoleOutputEnum.LINE_FORMAT_INSTRUCTIONS.getConsoleOutput() + NEW_LINE +
-                ConsoleOutputEnum.LINE_EXAMPLE.getConsoleOutput());
+        System.out.println(properties.getWelcome());
+        System.out.println(properties.getEnterText() + NEW_LINE +
+                properties.getLineFormatInstructions() + NEW_LINE +
+                properties.getLineExample());
         loadPackage();
     }
 
@@ -45,12 +49,12 @@ public class DeliveryProcessService {
     private void loadPackage() {
         String inputLine = scanner.nextLine();
         if (inputLine.equals(UserInputEnum.QUIT_APP.getConsoleInput())) {
-            System.out.println(ConsoleOutputEnum.QUIT_APP_TEXT.getConsoleOutput());
+            System.out.println(properties.getQuitAppText());
             return;
         }
 
         if (!rulesLineCheck(inputLine)) {
-            System.out.println(ConsoleOutputEnum.INVALID_LINE_TEXT.getConsoleOutput());
+            System.out.println(properties.getInvalidLineText());
             loadPackage();
             return;
         }
@@ -86,7 +90,7 @@ public class DeliveryProcessService {
      * @return
      */
     public boolean rulesLineCheck(String inputLine) {
-        Pattern pattern = Pattern.compile("^(([0-9][.][0-9]{1,3})|([0-9]|(10))) [0-9]{5}$");
+        Pattern pattern = Pattern.compile(properties.getRulesLinePattern());
         return pattern.matcher(inputLine).find();
     }
 
@@ -99,7 +103,7 @@ public class DeliveryProcessService {
         if (!deliveryTargets.isEmpty()) {
             TreeSet<DeliveryTargetDto> orderedPackages = new TreeSet<>(deliveryTargets);
             System.out.println();
-            System.out.println(ConsoleOutputEnum.OUTPUT_FROM_STORAGE.getConsoleOutput());
+            System.out.println(properties.getOutputFromStorage());
             orderedPackages.forEach(dto -> {
                 System.out.println(dto.getPostalCode() + " " + dto.getTotalWeight());
             });
