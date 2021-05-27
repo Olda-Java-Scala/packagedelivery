@@ -1,9 +1,10 @@
 package com.homework.packagedelivery;
 
 import com.homework.packagedelivery.dto.DeliveryTargetDto;
+import com.homework.packagedelivery.services.DeliveryProcessService;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PackageDeliveryApplicationTests {
 
@@ -33,5 +34,26 @@ class PackageDeliveryApplicationTests {
 
         float expectedWeight = 3.802f;
         assertEquals(expectedWeight, dto.getTotalWeight());
+    }
+
+    @Test
+    void ruleLinesTest() {
+        DeliveryProcessService deliveryProcessService = new DeliveryProcessService();
+        String correctLine = "3.4 08801";
+        boolean result = deliveryProcessService.rulesLineCheck(correctLine);
+        assertTrue(result);
+
+        String incorrectLine = "3.4 088011";
+        boolean resultOfIncorrectLine = deliveryProcessService.rulesLineCheck(incorrectLine);
+        assertFalse(resultOfIncorrectLine);
+    }
+
+    @Test
+    void lineSplittingTest() {
+        DeliveryProcessService deliveryProcessService = new DeliveryProcessService();
+        String correctLine = "3.4 08801";
+        DeliveryTargetDto dto = deliveryProcessService.setDeliveryTargetDto(correctLine);
+        assertEquals(3.4f, dto.getTotalWeight());
+        assertEquals("08801", dto.getPostalCode());
     }
 }

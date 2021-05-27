@@ -74,7 +74,7 @@ public class DeliveryProcessService {
      * @param inputLine
      * @return
      */
-    private DeliveryTargetDto setDeliveryTargetDto(String inputLine) {
+    public DeliveryTargetDto setDeliveryTargetDto(String inputLine) {
         float packageWeight = Float.parseFloat(inputLine.split(" ")[0]);
         String postalCoda = inputLine.split(" ")[1];
         return new DeliveryTargetDto(packageWeight, postalCoda);
@@ -85,7 +85,7 @@ public class DeliveryProcessService {
      * @param inputLine
      * @return
      */
-    private boolean rulesLineCheck(String inputLine) {
+    public boolean rulesLineCheck(String inputLine) {
         Pattern pattern = Pattern.compile("^(([0-9][.][0-9]{1,3})|([0-9]|(10))) [0-9]{5}$");
         return pattern.matcher(inputLine).find();
     }
