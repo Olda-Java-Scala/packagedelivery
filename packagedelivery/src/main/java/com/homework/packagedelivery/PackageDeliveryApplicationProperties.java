@@ -25,5 +25,7 @@ public class PackageDeliveryApplicationProperties {
 
     private String outputFromStorage;
 
+    private String quitAppCommand;
+
     private String rulesLinePattern;
 }

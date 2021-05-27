@@ -2,7 +2,6 @@ package com.homework.packagedelivery.services;
 
 import com.homework.packagedelivery.PackageDeliveryApplicationProperties;
 import com.homework.packagedelivery.dto.DeliveryTargetDto;
-import com.homework.packagedelivery.enums.UserInputEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -48,7 +47,7 @@ public class DeliveryProcessService {
      */
     private void loadPackage() {
         String inputLine = scanner.nextLine();
-        if (inputLine.equals(UserInputEnum.QUIT_APP.getConsoleInput())) {
+        if (inputLine.equals(properties.getQuitAppCommand())) {
             System.out.println(properties.getQuitAppText());
             return;
         }
