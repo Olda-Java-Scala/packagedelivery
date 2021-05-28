@@ -28,4 +28,8 @@ public class PackageDeliveryApplicationProperties {
     private String quitAppCommand;
 
     private String rulesLinePattern;
+
+    private String askForPriceList;
+
+    private String enterPriceListName;
 }

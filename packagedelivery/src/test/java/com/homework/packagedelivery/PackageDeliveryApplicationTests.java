@@ -13,7 +13,7 @@ class PackageDeliveryApplicationTests {
         float firstPackageWeight = 1.5f;
         String defaultPostalCode = "10001";
 
-        DeliveryTargetDto dto = new DeliveryTargetDto(firstPackageWeight, defaultPostalCode);
+        DeliveryTargetDto dto = new DeliveryTargetDto(firstPackageWeight, defaultPostalCode, 0);
 
         float secondPackageWeight = 2.3f;
         dto.addPackageWeight(secondPackageWeight);
@@ -27,7 +27,7 @@ class PackageDeliveryApplicationTests {
         float firstPackageWeight = 1.5f;
         String defaultPostalCode = "10001";
 
-        DeliveryTargetDto dto = new DeliveryTargetDto(firstPackageWeight, defaultPostalCode);
+        DeliveryTargetDto dto = new DeliveryTargetDto(firstPackageWeight, defaultPostalCode, 0);
 
         float secondPackageWeight = 2.301999f;
         dto.addPackageWeight(secondPackageWeight);

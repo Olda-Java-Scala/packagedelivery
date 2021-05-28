@@ -25,9 +25,13 @@ public class DeliveryProcessService {
 
     private static final String NEW_LINE = System.lineSeparator();
     private final Scanner scanner = new Scanner(System.in);
+    private static final String priceListPositiveInput = "Y";
+    private static boolean isPriceListLoaded;
 
     @Autowired
     PackageDeliveryApplicationProperties properties;
+    @Autowired
+    PriceListService priceListService;
 
     /**
      * Starting method of whole process, where basic information is displayed to user, like welcome and rules for
@@ -38,6 +42,13 @@ public class DeliveryProcessService {
         System.out.println(properties.getEnterText() + NEW_LINE +
                 properties.getLineFormatInstructions() + NEW_LINE +
                 properties.getLineExample());
+        System.out.println(properties.getAskForPriceList());
+        if (scanner.nextLine().equals(priceListPositiveInput)) {
+            System.out.println(properties.getEnterPriceListName());
+            String priceListFile = scanner.nextLine();
+            isPriceListLoaded = true;
+            priceListService.loadPriceListFile(priceListFile);
+        }
         loadPackage();
     }
 
@@ -65,6 +76,8 @@ public class DeliveryProcessService {
             deliveryTargets.forEach(target -> {
                 if (target.getPostalCode().equals(dto.getPostalCode())) {
                     target.addPackageWeight(dto.getTotalWeight());
+                    if (isPriceListLoaded)
+                        target.addPrice(dto.getPrice());
                 }
             });
         } else {
@@ -79,8 +92,11 @@ public class DeliveryProcessService {
      */
     public DeliveryTargetDto setDeliveryTargetDto(String inputLine) {
         float packageWeight = Float.parseFloat(inputLine.split(" ")[0]);
-        String postalCoda = inputLine.split(" ")[1];
-        return new DeliveryTargetDto(packageWeight, postalCoda);
+        String postalCode = inputLine.split(" ")[1];
+        float price = 0;
+        if (isPriceListLoaded)
+            price = priceListService.calculatePriceForPackage(packageWeight);
+        return new DeliveryTargetDto(packageWeight, postalCode, price);
     }
 
     /** Method checks, if entered line of data is correct. User can enter max weight 10kilos - same max value as Czech
@@ -104,7 +120,11 @@ public class DeliveryProcessService {
             System.out.println();
             System.out.println(properties.getOutputFromStorage());
             orderedPackages.forEach(dto -> {
-                System.out.println(dto.getPostalCode() + " " + dto.getTotalWeight());
+                if (isPriceListLoaded)
+                    System.out.println(dto.getPostalCode() + " " + dto.getTotalWeight() + " " + dto.getPrice());
+                else {
+                    System.out.println(dto.getPostalCode() + " " + dto.getTotalWeight());
+                }
             });
         }
     }
