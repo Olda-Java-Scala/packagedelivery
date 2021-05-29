@@ -2,6 +2,7 @@ package com.homework.packagedelivery.services;
 
 import com.homework.packagedelivery.PackageDeliveryApplicationProperties;
 import com.homework.packagedelivery.dto.DeliveryTargetDto;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 @EnableScheduling
+@Data
 public class DeliveryProcessService {
 
     // Stores postal codes and their complete weights of all packages
@@ -26,7 +28,8 @@ public class DeliveryProcessService {
     private static final String NEW_LINE = System.lineSeparator();
     private final Scanner scanner = new Scanner(System.in);
     private static final String priceListPositiveInput = "Y";
-    private static boolean isPriceListLoaded;
+    // this boolean stored, if price list with fees is loaded (true) or not (false)
+    private boolean isPriceListLoaded;
 
     @Autowired
     PackageDeliveryApplicationProperties properties;
@@ -43,13 +46,29 @@ public class DeliveryProcessService {
                 properties.getLineFormatInstructions() + NEW_LINE +
                 properties.getLineExample());
         System.out.println(properties.getAskForPriceList());
-        if (scanner.nextLine().equals(priceListPositiveInput)) {
-            System.out.println(properties.getEnterPriceListName());
-            String priceListFile = scanner.nextLine();
-            isPriceListLoaded = true;
-            priceListService.loadPriceListFile(priceListFile);
-        }
+        if (scanner.nextLine().equals(priceListPositiveInput))
+            loadPriceListRequest();
         loadPackage();
+    }
+
+    /**
+     * Method try to load file with fees of package weight.
+     */
+    public void loadPriceListRequest() {
+        System.out.println(properties.getEnterPriceListName());
+        System.out.println(properties.getPriceListFormat());
+        System.out.println(properties.getPriceListExample());
+        String priceListFile = scanner.nextLine();
+        isPriceListLoaded = true;
+        priceListService.loadPriceListFile(priceListFile);
+
+    }
+
+    /**
+     * Method cancels loading file attribute.
+     */
+    public void cancelLoadingFile() {
+        isPriceListLoaded = false;
     }
 
     /**
@@ -63,8 +82,8 @@ public class DeliveryProcessService {
             return;
         }
 
-        if (!rulesLineCheck(inputLine)) {
-            System.out.println(properties.getInvalidLineText());
+        if (!rulesLineCheck(inputLine, properties.getConsoleRulesLinePattern())) {
+            System.out.println(properties.getConsoleInvalidLineText());
             loadPackage();
             return;
         }
@@ -72,7 +91,7 @@ public class DeliveryProcessService {
         DeliveryTargetDto dto = setDeliveryTargetDto(inputLine);
         // this checks, if postal code has already been entered into list
         if (deliveryTargets.stream().anyMatch(target -> target.getPostalCode().equals(dto.getPostalCode()))) {
-            // if postal code is already in list, this adds next weight of package to the postal code
+            // if postal code is already in list, this adds next weight of package to the postal code, eventually price
             deliveryTargets.forEach(target -> {
                 if (target.getPostalCode().equals(dto.getPostalCode())) {
                     target.addPackageWeight(dto.getTotalWeight());
@@ -104,8 +123,8 @@ public class DeliveryProcessService {
      * @param inputLine
      * @return
      */
-    public boolean rulesLineCheck(String inputLine) {
-        Pattern pattern = Pattern.compile(properties.getRulesLinePattern());
+    public boolean rulesLineCheck(String inputLine, String linePattern) {
+        Pattern pattern = Pattern.compile(linePattern);
         return pattern.matcher(inputLine).find();
     }
 

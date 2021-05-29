@@ -21,13 +21,25 @@ public class PackageDeliveryApplicationProperties {
 
     private String quitAppText;
 
-    private String invalidLineText;
+    private String consoleInvalidLineText;
+
+    private String priceListInvalidLineText;
 
     private String outputFromStorage;
 
     private String quitAppCommand;
 
-    private String rulesLinePattern;
+    private String consoleRulesLinePattern;
+
+    private String fileRulesLinePattern;
+
+    private String fileLoadedOk;
+
+    private String priceListFormat;
+
+    private String priceListExample;
+
+    private String fileNotFoundText;
 
     private String askForPriceList;
 

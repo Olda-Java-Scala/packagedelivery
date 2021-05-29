@@ -2,11 +2,16 @@ package com.homework.packagedelivery;
 
 import com.homework.packagedelivery.dto.DeliveryTargetDto;
 import com.homework.packagedelivery.services.DeliveryProcessService;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@RequiredArgsConstructor
 class PackageDeliveryApplicationTests {
+
+    private static final String linePattern = "^(([0-9][.][0-9]{1,3})|([0-9]|(10))) [0-9]{5}$";
 
     @Test
     void addWeightToDtoTest() {
@@ -40,11 +45,11 @@ class PackageDeliveryApplicationTests {
     void ruleLinesTest() {
         DeliveryProcessService deliveryProcessService = new DeliveryProcessService();
         String correctLine = "3.4 08801";
-        boolean result = deliveryProcessService.rulesLineCheck(correctLine);
+        boolean result = deliveryProcessService.rulesLineCheck(correctLine, linePattern);
         assertTrue(result);
 
         String incorrectLine = "3.4 088011";
-        boolean resultOfIncorrectLine = deliveryProcessService.rulesLineCheck(incorrectLine);
+        boolean resultOfIncorrectLine = deliveryProcessService.rulesLineCheck(incorrectLine, linePattern);
         assertFalse(resultOfIncorrectLine);
     }
 
