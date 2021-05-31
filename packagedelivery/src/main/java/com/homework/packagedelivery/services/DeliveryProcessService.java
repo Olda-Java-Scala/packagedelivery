@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class DeliveryProcessService {
 
     // Stores postal codes and their complete weights of all packages
-    private static final List<DeliveryTargetDto> deliveryTargets = Collections.synchronizedList(new ArrayList<>());
+    private static final TreeSet<DeliveryTargetDto> deliveryTargets = new TreeSet<>();
 
     private static final String NEW_LINE = System.lineSeparator();
     private final Scanner scanner = new Scanner(System.in);
@@ -81,7 +81,6 @@ public class DeliveryProcessService {
             System.out.println(properties.getQuitAppText());
             return;
         }
-
         if (!rulesLineCheck(inputLine, properties.getConsoleRulesLinePattern())) {
             System.out.println(properties.getConsoleInvalidLineText());
             loadPackage();
@@ -135,10 +134,9 @@ public class DeliveryProcessService {
     @Scheduled(cron = "0 * * * * *")
     public void loadedPackagesListing() {
         if (!deliveryTargets.isEmpty()) {
-            TreeSet<DeliveryTargetDto> orderedPackages = new TreeSet<>(deliveryTargets);
             System.out.println();
             System.out.println(properties.getOutputFromStorage());
-            orderedPackages.forEach(dto -> {
+            deliveryTargets.forEach(dto -> {
                 if (isPriceListLoaded)
                     System.out.println(dto.getPostalCode() + " " + dto.getTotalWeight() + " " + dto.getPrice());
                 else {

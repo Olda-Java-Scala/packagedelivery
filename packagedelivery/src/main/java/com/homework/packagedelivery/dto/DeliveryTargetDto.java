@@ -18,7 +18,8 @@ public class DeliveryTargetDto implements Comparable<DeliveryTargetDto> {
 
     @Override
     public int compareTo(DeliveryTargetDto dto) {
-        return Integer.compare(Math.round(dto.getTotalWeight()), Math.round(getTotalWeight()));
+        return dto.getTotalWeight() == getTotalWeight() ? Math.round(dto.getTotalWeight())
+                : Integer.compare(Math.round(dto.getTotalWeight()), Math.round(getTotalWeight()));
     }
 
     /** Adds weight for next package, which has to be delivered to target location
