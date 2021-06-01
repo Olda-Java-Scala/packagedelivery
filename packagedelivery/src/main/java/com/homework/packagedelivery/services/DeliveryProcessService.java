@@ -91,13 +91,14 @@ public class DeliveryProcessService {
         // this checks, if postal code has already been entered into list
         if (deliveryTargets.stream().anyMatch(target -> target.getPostalCode().equals(dto.getPostalCode()))) {
             // if postal code is already in list, this adds next weight of package to the postal code, eventually price
-            deliveryTargets.forEach(target -> {
+            for (DeliveryTargetDto target : deliveryTargets) {
                 if (target.getPostalCode().equals(dto.getPostalCode())) {
                     target.addPackageWeight(dto.getTotalWeight());
                     if (isPriceListLoaded)
                         target.addPrice(dto.getPrice());
+                    break;
                 }
-            });
+            }
         } else {
             deliveryTargets.add(dto);
         }
